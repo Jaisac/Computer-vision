@@ -1,8 +1,13 @@
 /*
- * procesador.cpp
+ * 
  *
  *  Created on: 23/05/2017
- *      Author: jamessacramento
+ *      Author: Jaime Sacramento
+ *	Description: Execute a folder of images to enhance them into a particular 
+ *	resolution using the nearest neighbor, bilinear and bicubic interpolation
+ *	and measure its new image quality using the quantitative metrics PSNR and 
+ * 	SSIM.
+ *	
  */
 
 #include <opencv.hpp>
@@ -66,13 +71,13 @@ for(size_t k=0;k < fn.size();++k){
 	}
 
 
-//############## Resolution control #################
+//############## Resolution control 
 	xy[0]= imgin.rows * 2;
 	xy[1]= imgin.cols * 2;
 
 	Size size(xy[0],xy[1]);
 
-//#############Proceso de interpolación#################
+//#############Proceso de interpolacion
 	cv::resize(imgin,img1,size, 0.75, 0.75,INTER_AREA);
 	stringstream num;
 		num <<k;
@@ -86,7 +91,7 @@ for(size_t k=0;k < fn.size();++k){
 //###############Ciclo secundario para usar los 3 algoritmos######
 	for(int i=0;i < 3;i++){
 
-//#############Proceso de adquisición de datos#################
+//#############Proceso de adquisición de datos
 		clock_t  meta, salida;
 		salida = clock();
 		cv::resize(imgin,img2,size, 0.75, 0.75,i);
@@ -94,27 +99,26 @@ for(size_t k=0;k < fn.size();++k){
 		psnr=getPSNR(img1,img2);
 		mssim=getMSSIM(img1,img2);
 
-//###################### Modulo de escritura txt1       ###########
+//############## Modulo de escritura txt1       
 		registro<<" PSNR :"<<psnr<<" ; SSIM :"<< mssim.val[0] << " ; Tiempo : ";
 		registro<< (float)meta/CLOCKS_PER_SEC << " ; algoritmo ; "<< tipo[i]<<" ||" ;
 
 
-//##################### Módulo de escritura txt2         ###########
+//############# Módulo de escritura txt2    
 		registroA <<psnr<<",";
 
-//##################### Módulo de escritura txt3         ###########
+//############ Módulo de escritura txt3         
 		registroB<<mssim.val[0]<<",";
-
-//##################### Módulo de escritura txt4         ###########
+//############ Módulo de escritura txt4        
 
 		registroC<<(float)meta/CLOCKS_PER_SEC<<",";
 
-//##################### Módulo de escritura imágenes       ###########
-		//if(residuo==0){
+//########### Módulo de escritura imágenes      
+		if(residuo==0){
 			index="C:\\Users\\jamessacramento\\Pictures\\lab_imagenes\\standard_test_images\\Proc\\"+convert+tipo[i]+imagen+".bmp";
 			imwrite(index, img2);
-		//}
-	}//###############   Fin del ciclo secundario    ######
+		}
+	}   
 /*
 		ctr=ctr + 1;
 		residuo=ctr;
@@ -124,7 +128,7 @@ for(size_t k=0;k < fn.size();++k){
 */
 
 
-//#####################Salto de línea en los .txt###############
+//########### Salto de línea en los .txt
 	registro<<"\n";
 	registroA<<"\n";
 	registroB<<"\n";
