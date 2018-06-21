@@ -27,18 +27,17 @@
 
 using namespace cv;
 using namespace std;
+
 double getPSNR ( const Mat& I1, const Mat& I2);
 Scalar getMSSIM(const Mat& I1, const Mat& I2);
 
 float residuo=0;
-int dividir,ctr, xy[1];
+int div,ctr, xy[1];
 double psnr;
 
 Scalar mssim;
 Mat imgin, img1, img2;
 string index,convert,imagen="_standard",tipo[3]={"_NN_","_BL_","_BC_"};
-
-
 
 
 int main(){
@@ -47,17 +46,15 @@ int main(){
 	ofstream registroB("ssim.txt");
 	ofstream registroC("tiempo.txt");
 
-
-
-//########  Uploading images module
+//########  Uploading images routine
 cv::String path("C:\\Users\\jamessacramento\\Pictures\\lab_imagenes\\standard_test_images/*.bmp");
 vector<cv::String> fn;
 vector <cv::Mat> datos;
 cv::glob(path,fn,true);
 
-//##########   Ciclo principal hasta que lea toda la carpeta
+//##########   Main cicle until end of file
+	
 for(size_t k=0;k < fn.size();++k){
-
 
 	imgin= cv::imread(fn[k],IMREAD_UNCHANGED);
 
@@ -65,19 +62,18 @@ for(size_t k=0;k < fn.size();++k){
 		cout << "Error, no se cargó la imagen.";
 		return -1;
 	}
-//###########    Color to gray
+//###########    Color to gray routine
 	if(imgin.channels()> 0){
 		cv::cvtColor(imgin,imgin,COLOR_BGR2GRAY);
 	}
-
-
-//############## Resolution control 
+	
+//############## Resolution control routine
 	xy[0]= imgin.rows * 2;
 	xy[1]= imgin.cols * 2;
 
 	Size size(xy[0],xy[1]);
 
-//#############Proceso de interpolacion
+//#############Interpolation routine
 	cv::resize(imgin,img1,size, 0.75, 0.75,INTER_AREA);
 	stringstream num;
 		num <<k;
@@ -88,10 +84,10 @@ for(size_t k=0;k < fn.size();++k){
 	}
 	registro<<k<<imagen<<";";
 
-//###############Ciclo secundario para usar los 3 algoritmos######
+//###############Secondary cycle to use the interpolation algorithms
 	for(int i=0;i < 3;i++){
 
-//#############Proceso de adquisición de datos
+//############# Acquisition data routine
 		clock_t  meta, salida;
 		salida = clock();
 		cv::resize(imgin,img2,size, 0.75, 0.75,i);
@@ -99,49 +95,40 @@ for(size_t k=0;k < fn.size();++k){
 		psnr=getPSNR(img1,img2);
 		mssim=getMSSIM(img1,img2);
 
-//############## Modulo de escritura txt1       
+//############# txt writing routine    
 		registro<<" PSNR :"<<psnr<<" ; SSIM :"<< mssim.val[0] << " ; Tiempo : ";
 		registro<< (float)meta/CLOCKS_PER_SEC << " ; algoritmo ; "<< tipo[i]<<" ||" ;
-
-
-//############# Módulo de escritura txt2    
-		registroA <<psnr<<",";
-
-//############ Módulo de escritura txt3         
+		registroA <<psnr<<",";    
 		registroB<<mssim.val[0]<<",";
-//############ Módulo de escritura txt4        
-
 		registroC<<(float)meta/CLOCKS_PER_SEC<<",";
 
-//########### Módulo de escritura imágenes      
+//########### Images writing routine     
 		if(residuo==0){
 			index="C:\\Users\\jamessacramento\\Pictures\\lab_imagenes\\standard_test_images\\Proc\\"+convert+tipo[i]+imagen+".bmp";
 			imwrite(index, img2);
 		}
 	}   
-/*
+//########### Routines to hamper images number on Hard Drive
 		ctr=ctr + 1;
 		residuo=ctr;
-		dividir= residuo/10;
+		div= residuo/10;
 		residuo=residuo/10;
 		residuo=residuo-dividir;
-*/
 
-
-//########### Salto de línea en los .txt
+//########### Newline for the txt documents
 	registro<<"\n";
 	registroA<<"\n";
 	registroB<<"\n";
 	registroC<<"\n";
 	datos.push_back(imgin);
 
-}//##################Fin del ciclo principal
+}//##################End of main cycle
 registro.close();
 registroA.close();
 registroB.close();
 registroC.close();
 }
-//##################Función para calcular el psnr
+//##################Rutine for PSNR
 double getPSNR(const Mat& I1, const Mat& I2){
 Mat s1;
 absdiff(I1, I2, s1);
@@ -164,7 +151,7 @@ if (sse <= 1e-10)
 	}
 
 }
-//##################Función para calcular SSIM
+//################## Function for PSNR and SSMI
 Scalar getMSSIM(const Mat& i1, const Mat& i2){
 
 const double C1 = 6.5025, C2 = 58.5225;
