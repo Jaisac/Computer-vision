@@ -4,7 +4,7 @@
  *  Created on: 23/07/2016
  *      Author: Jaime Sacramento
  *	Description: Convert the color of the pixels of an image according to a 
- *	imposed threshold.
+ *	imposed threshold with a cascade effect.
  *	
  */
 
